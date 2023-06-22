@@ -42,7 +42,7 @@
             <onlineUrl></onlineUrl> </metadataProvider>
 <associatedParty> <individualName>
                 <givenName>Secretariat</givenName>
-                <surName></surName>
+                <surName>Team</surName>
             </individualName>
             <organizationName>OBIS</organizationName>
             <positionName>Management</positionName>
@@ -97,7 +97,7 @@
             <onlineUrl></onlineUrl> </contact>
 <contact> <individualName>
                 <givenName>Secretariat</givenName>
-                <surName></surName>
+                <surName>Team</surName>
             </individualName>
             <organizationName>OBIS</organizationName>
             <positionName>Management</positionName>

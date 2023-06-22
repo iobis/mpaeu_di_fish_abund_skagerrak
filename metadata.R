@@ -6,7 +6,7 @@ library(obisdi)
 # More information see ?gen_metadata
 
 responsible <- gen_meta_person(c("Silas", "Secretariat"),
-                               c("Principe", ""),
+                               c("Principe", "Team"),
                                "OBIS",
                                c("Researcher", "Management"),
                                "Secretariat",
@@ -34,12 +34,12 @@ work_licence <- "This work is licensed under a Creative Commons Attribution (CC-
 
 gen_metadata(
   title = work_title,
-  creator = responsible - "Secretariat",
-  metadataProvider = responsible - "Secretariat",
+  creator = responsible - "Secretariat Team",
+  metadataProvider = responsible - "Secretariat Team",
   language = "English",
   metadataLanguage = "English",
   abstract = work_abstract,
-  associatedParty = responsible + "Secretariat",
+  associatedParty = responsible + "Secretariat Team",
   coverage = list(geo_coverage, temp_coverage),
   purpose = work_purpose,
   contact = responsible,
