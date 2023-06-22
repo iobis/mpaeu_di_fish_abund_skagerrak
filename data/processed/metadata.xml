@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 eml.xsd"
+    xml:lang="en"
+    packageId="619a4b95-1a82-4006-be6a-7dbe3c9b33c5/v7" system="http://gbif.org" scope="system">
+
+  <dataset>
+<title>Long term monitoring of fish abundances from coastal Skagerrak</title>
+<creator> <individualName>
+                <givenName>Silas</givenName>
+                <surName>Principe</surName>
+            </individualName>
+            <organizationName>OBIS</organizationName>
+            <positionName>Researcher</positionName>
+            <address>
+            	<deliveryPoint></deliveryPoint>
+                <city></city>
+                <administrativeArea></administrativeArea>
+                <postalCode></postalCode>
+                <country></country>
+            </address>
+            <phone></phone>
+            <electronicMailAddress>s.principe@unesco.org</electronicMailAddress>
+            <onlineUrl></onlineUrl> </creator>
+<metadataProvider> <individualName>
+                <givenName>Silas</givenName>
+                <surName>Principe</surName>
+            </individualName>
+            <organizationName>OBIS</organizationName>
+            <positionName>Researcher</positionName>
+            <address>
+            	<deliveryPoint></deliveryPoint>
+                <city></city>
+                <administrativeArea></administrativeArea>
+                <postalCode></postalCode>
+                <country></country>
+            </address>
+            <phone></phone>
+            <electronicMailAddress>s.principe@unesco.org</electronicMailAddress>
+            <onlineUrl></onlineUrl> </metadataProvider>
+<associatedParty> <individualName>
+                <givenName>Secretariat</givenName>
+                <surName></surName>
+            </individualName>
+            <organizationName>OBIS</organizationName>
+            <positionName>Management</positionName>
+            <address>
+            	<deliveryPoint></deliveryPoint>
+                <city></city>
+                <administrativeArea></administrativeArea>
+                <postalCode></postalCode>
+                <country></country>
+            </address>
+            <phone></phone>
+            <electronicMailAddress></electronicMailAddress>
+            <onlineUrl></onlineUrl> </associatedParty>
+<language>English</language>
+<metadataLanguage>English</metadataLanguage>
+<abstract><para>It was originally published in BioTIME (https://biotime.st-andrews.ac.uk/selectStudy.php?study=428) and was authored by Halvor Knutsen, Ebsen Moland. The dataset is licensed under a CC-BY license.</para></abstract>
+<abstract><para>Barceló, C., Ciannelli, L., Olsen, E.M., Johannessen, T. and Knutsen, H. (2016) Eight decades of sampling reveal a contemporary novel fish assemblage in coastal nursery habitats. Global change biology, 22, 1155-1167.</para></abstract>
+<abstract><para>Olsen, E. M., Carlson, S. M., Gjøsæter, J. and Stenseth, N. C. (2009) Nine decades of decreasing phenotypic variability in Atlantic cod. Ecology Letters, 12, 622–631. doi:10.1111/j.1461-0248.2009.01311.x.</para></abstract>
+<abstract><para>Rogers, L. A., Stige, L. C., Olsen, E. M., Knutsen, H., Chan, K.-S. and Stenseth, N. C. (2011) Climate and population density drive changes in cod body size throughout a century on the Norwegian coast. Proceedings of the National Academy of Sciences, 108(5), 1961–1966.</para></abstract>
+<abstract><para>Stenseth, N. C., Bjørnstadf, O. N., Falck, W, Fromentin, J. M., Gjøsieter, J. and Gray, J. S. (1999) Dynamics of coastal cod populations: intra-and intercohort density dependence and stochastic processes. Proceedings of the Royal Society of London B: Biological Sciences, 266(1429), 1645–1654.)</para></abstract>
+<coverage><geographicCoverage>
+                <geographicDescription>Coastal Skagerrak</geographicDescription>
+                <boundingCoordinates>
+                    <westBoundingCoordinate></westBoundingCoordinate>
+                    <eastBoundingCoordinate></eastBoundingCoordinate>
+                    <northBoundingCoordinate></northBoundingCoordinate>
+                    <southBoundingCoordinate></southBoundingCoordinate>
+                </boundingCoordinates>
+            </geographicCoverage>
+<temporalCoverage>
+                <rangeOfDates>
+                    <beginDate><calendarDate>1919</calendarDate></beginDate>
+                    <endDate><calendarDate>2015</calendarDate></endDate>
+                </rangeOfDates>
+            </temporalCoverage></coverage>
+<purpose><para>This data ingestion of the BioTIME dataset into OBIS aims to provide easier access to the data and is part of an effort linked to the MPA Europe project.</para></purpose>
+<contact> <individualName>
+                <givenName>Silas</givenName>
+                <surName>Principe</surName>
+            </individualName>
+            <organizationName>OBIS</organizationName>
+            <positionName>Researcher</positionName>
+            <address>
+            	<deliveryPoint></deliveryPoint>
+                <city></city>
+                <administrativeArea></administrativeArea>
+                <postalCode></postalCode>
+                <country></country>
+            </address>
+            <phone></phone>
+            <electronicMailAddress>s.principe@unesco.org</electronicMailAddress>
+            <onlineUrl></onlineUrl> </contact>
+<contact> <individualName>
+                <givenName>Secretariat</givenName>
+                <surName></surName>
+            </individualName>
+            <organizationName>OBIS</organizationName>
+            <positionName>Management</positionName>
+            <address>
+            	<deliveryPoint></deliveryPoint>
+                <city></city>
+                <administrativeArea></administrativeArea>
+                <postalCode></postalCode>
+                <country></country>
+            </address>
+            <phone></phone>
+            <electronicMailAddress></electronicMailAddress>
+            <onlineUrl></onlineUrl> </contact>
+<methods><methodStep>
+                <description>
+                    <para>Samples collected from Skagerrak coast.</para>
+                </description>
+            </methodStep> <sampling>
+                <studyExtent>
+                    <description>
+                    	<para>Skagerrak</para>
+                    </description>
+                </studyExtent>
+                <samplingDescription>
+                    <para>Each station is a beach seine haul (5-700m2) where all species are counted</para>
+                </samplingDescription>
+            </sampling> </methods>
+<intellectualRights><para>This work is licensed under a Creative Commons Attribution (CC-BY 4.0) License.</para></intellectualRights>
+</dataset>
+                 </eml:eml>

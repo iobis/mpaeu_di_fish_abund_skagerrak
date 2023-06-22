@@ -1,0 +1,266 @@
+---
+title: "Marine biodiversity data ingestion for OBIS (DwC translation)"
+subtitle: "Long term monitoring of fish abundances from coastal Skagerrak"
+author:
+- [your name here]
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+
+This document describes how we map the checklist data to Darwin Core. The source file for this document can be found [here](https://github.com/iobis/mpaeu_di_fish_abund_skagerrak/blob/master/src/obisdi_general.Rmd).
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Load libraries:
+
+```{r}
+library(tidyverse)      # Data manipulation
+library(obisdi)         # Tools for data ingestion for OBIS
+library(here)           # Get paths (important!)
+library(arrow)          # To deal with parquet files
+library(worrms)         # Taxonomy checking
+```
+
+# Read source data
+
+This dataset was downloaded from the BioTIME^[https://biotime.st-andrews.ac.uk/] database and can be found in this link: https://biotime.st-andrews.ac.uk/selectStudy.php?study=428. Two files are available on this link: the raw data and the metadata.
+
+```{r}
+# Get the path to data/raw
+raw_path <- here("data", "raw")
+
+list.files(raw_path)
+```
+
+# Preprocessing
+
+We first read the raw data:
+
+```{r}
+dataset <- read.csv(paste0(raw_path, "/raw_data_428.csv"))
+
+str(dataset)
+
+head(dataset)
+```
+
+By reading the `metadata` we can see that there is no biomass information, so we are interested in the abundance information:
+
+```{r include=FALSE}
+metadata <- read.csv(paste0(raw_path, "/metadata_428.csv"))
+```
+
+> `r metadata$DATA_SOURCE[1]`
+
+We select only the relevant collumns. We also add a unique ID to each occurrence to be able to track back any transformation on data.
+
+```{r}
+dataset <- select(dataset, -BIOMAS, -SAMPLE_DESC)
+
+dataset$uniqueID <- paste0("biotime_study248_", 1:nrow(dataset))
+```
+
+# Darwin Core mapping
+
+We will need to generate two files for the submission:
+1. event - describe the sampling event
+2. occurrence - the occurrence of species in an event
+
+## `event` table
+
+We start by getting each unique event. Both the occurrences and the events table need to have the same eventID and locationID, so we still work with the `dataset` object.
+
+```{r}
+dataset <- dataset %>%
+  arrange(-DAY, -MONTH, -YEAR)
+
+dataset <- dataset %>%
+  group_by(LATITUDE, LONGITUDE, PLOT, DAY, MONTH, YEAR) %>%
+  mutate(dwc_eventID = paste0("skag_ev_", cur_group_id())) %>%
+  group_by(LATITUDE, LONGITUDE, PLOT) %>%
+  mutate(dwc_locationID = paste0("skag_lo_", cur_group_id()))
+```
+
+Correct the name of Longitude/Latitude fields, and date.
+
+```{r}
+dataset <- dataset %>%
+  mutate(dwc_decimalLatitude = LATITUDE,
+         dwc_decimalLongitude = LONGITUDE) %>%
+  mutate(dwc_eventDate = paste(YEAR, MONTH, DAY, sep = "-")) %>%
+  mutate(dwc_day = DAY, dwc_year = YEAR, dwc_month = MONTH)
+```
+
+Now we create a new object called `events` that will be our events table. We add other columns that are needed:
+
+```{r}
+events <- dataset %>%
+  mutate(dwc_type = "Event",
+         dwc_ownerInstitutionCode = "HAVFORSKNINGSINSTITUTTET",
+         dwc_samplingProtocol = "Beach seine haul (40m long, mesh size 1.5cm), nearshore (<15m depth) - all species counted.",
+         dwc_sampleSizeUnit = "square metre",
+         dwc_sampleSizeValue = "5-700",
+         dwc_samplingEffort = "transect",
+         dwc_country = "Norway",
+         dwc_countryCode = "NO",
+         dwc_locality = "Skagerrak",
+         dwc_datasetID = paste0("biotime_study", metadata$STUDY_ID[1]),
+         dwc_datasetName = "Long term monitoring of fish abundances from coastal Skagerrak.")
+```
+
+Get only the unique events:
+
+```{r}
+events <- events %>%
+  ungroup() %>%
+  distinct(dwc_eventID, .keep_all = T)
+```
+
+## `occurrence` table
+
+We first create a new object that will have our occurrences:
+
+```{r}
+occurrences <- dataset
+```
+
+Then we add the needed columns:
+
+```{r}
+occurrences <- occurrences %>%
+  mutate(dwc_type = "Event",
+         dwc_ownerInstitutionCode = "HAVFORSKNINGSINSTITUTTET",
+         dwc_occurrenceID = uniqueID,
+         dwc_basisOfRecord = "HumanObservation",
+         #dwc_scientificName = GENUS_SPECIES, # We will add it later, corrected
+         dwc_individualCount = ABUNDANCE,
+         dwc_organismQuantity = ABUNDANCE,
+         dwc_organismQuantityType = "individuals")
+```
+
+We have no information if this dataset was checked with WoRMS for consistency of taxonomy. Thus, we do a check here:
+
+```{r}
+# Look into WoRMS for each name
+name_checking <- wm_records_names(unique(occurrences$GENUS_SPECIES))
+
+# Verify if there is any record with not valid names
+table(unlist(lapply(name_checking, function(x){x$status})))
+
+# We see that there are three unaccepted records. For these, we will extract the correct names.
+# We also check if there are records for which we were unable to find information:
+no_match <- unique(occurrences$GENUS_SPECIES)[unlist(lapply(name_checking, nrow)) == 0]
+no_match
+```
+
+We have some records that needs updated names and also 4 records for which there was no match. One of them is a unknown taxa and one is a non marine species^[The species _Polioptila caerulea_ returns a bird in all our searches. It's possible that this is a mistake when the name was written in the table.] both which we will exclude, while for the other 2 we manually correct the information:
+
+```{r}
+name_checking <- lapply(name_checking, function(x){
+  if (nrow(x) == 0) {
+    x <- name_checking[[1]][1,] 
+    x[1,] <- NA
+  }
+  x
+})
+
+name_info <- bind_rows(name_checking)
+
+name_info <- name_info %>%
+  select(valid_name, valid_AphiaID, valid_authority,
+                kingdom, phylum, class, order, family, genus, rank) %>%
+  mutate(scientificName = valid_name,
+         scientificNameAuthorship = valid_authority,
+         scientificNameID = paste0("urn:lsid:marinespecies.org:taxname:", valid_AphiaID),
+         taxonRank = rank) %>%
+  select(-valid_name, -valid_authority, -valid_AphiaID, -rank)
+
+name_info$GENUS_SPECIES <- unique(occurrences$GENUS_SPECIES)
+
+occurrences <- occurrences %>%
+  filter(!GENUS_SPECIES %in% c("Manetyngel unknown", "Polioptila caerulea"))
+name_info <- name_info %>%
+  filter(!GENUS_SPECIES %in% c("Manetyngel unknown", "Polioptila caerulea"))
+
+name_info[name_info$GENUS_SPECIES == "Sygnathus typhle",1:10] <-
+  list("Animalia", "Chordata", "Teleostei", "Syngnathiformes", "Syngnathidae", "Syngnathus", "Syngnathus typhle", "(Linnaeus, 1758)",
+       "urn:lsid:marinespecies.org:taxname:127393", "Species")
+
+name_info[name_info$GENUS_SPECIES == "Labrus bimaculatus",1:10] <-
+  list("Animalia", "Chordata", "Teleostei", NA, "Labridae", "Labrus", "Labrus mixtus", "(Linnaeus, 1758)",
+       "urn:lsid:marinespecies.org:taxname:151501", "Species") # According to FishBase
+
+# Merge correct names
+colnames(name_info)[1:10] <- paste0("dwc_", colnames(name_info)[1:10])
+
+# Add originalNameUsage for the one we searched on FishBase
+name_info$dwc_originalNameUsage <- NA
+name_info$dwc_originalNameUsage[name_info$GENUS_SPECIES == "Labrus bimaculatus"] <-
+  "Labrus bimaculatus"
+
+occurrences <- left_join(occurrences, name_info, by = "GENUS_SPECIES")
+occurrences$dwc_taxonRank <- tolower(occurrences$dwc_taxonRank)
+```
+
+Now we check if both tables have the same number of unique `locationID` and `eventID`:
+
+```{r}
+all.equal(unique(occurrences$dwc_eventID), unique(occurrences$dwc_eventID))
+
+all.equal(unique(occurrences$dwc_locationID), unique(occurrences$dwc_locationID))
+```
+
+# Post-processing
+
+Remove unused columns and change names of those with *dwc_*:
+
+```{r}
+events <- events %>%
+  mutate(dwc_id = uniqueID,
+         dwc_eventRemarks = paste("Plot", PLOT)) %>%
+  select(starts_with("dwc_"))
+
+occurrences <- occurrences %>%
+  mutate(dwc_id = uniqueID) %>%
+  ungroup() %>%
+  select(starts_with("dwc_"))
+
+# Change column names
+colnames(events) <- str_remove(colnames(events), "dwc_")
+
+colnames(occurrences) <- str_remove(colnames(occurrences), "dwc_")
+
+# Remove columns from the occurrences table
+occurrences <- occurrences %>%
+  select(-day, -month, -year, -decimalLatitude, -decimalLongitude, -eventDate,
+         -locationID)
+```
+
+We now have our final files:
+
+```{r}
+occurrences
+
+events
+```
+
+
+# Export final files
+
+We export in `csv` format:
+
+```{r}
+proc_path <- here("data", "processed")
+
+write_csv(events, paste0(proc_path, "/events.csv"))
+write_csv(occurrences, paste0(proc_path, "/occurrences.csv"))
+```
+
