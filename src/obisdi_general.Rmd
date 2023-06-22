@@ -224,12 +224,10 @@ Remove unused columns and change names of those with *dwc_*:
 
 ```{r}
 events <- events %>%
-  mutate(dwc_id = uniqueID,
-         dwc_eventRemarks = paste("Plot", PLOT)) %>%
+  mutate(dwc_eventRemarks = paste("Plot", PLOT)) %>%
   select(starts_with("dwc_"))
 
 occurrences <- occurrences %>%
-  mutate(dwc_id = uniqueID) %>%
   ungroup() %>%
   select(starts_with("dwc_"))
 
