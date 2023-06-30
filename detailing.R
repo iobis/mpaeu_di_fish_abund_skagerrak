@@ -16,13 +16,13 @@ metadata <- read.csv("data/raw/metadata_428.csv")
 
 add_metadata_readme(
   data.frame(
-    decription = "Samples are collected from the Skagerrak coast and each station (we have coordinates) is a beach seine haul (5-700m2) where all species are counted.",
+    description = "Samples are collected from the Skagerrak coast and each station (we have coordinates) is a beach seine haul (5-700m2) where all species are counted.",
     reponame = "BioTIME (https://biotime.st-andrews.ac.uk/selectStudy.php?study=428)",
     doi = "Barceló, C., Ciannelli, L., Olsen, E.M., Johannessen, T. & Knutsen, H. (2016) Eight decades of sampling reveal a contemporary novel fish assemblage in coastal nursery habitats. Global change biology, 22, 1155-1167.
     Olsen, E. M., Carlson, S. M., Gjøsæter, J. & Stenseth, N. C. (2009) Nine decades of decreasing phenotypic variability in Atlantic cod. Ecology Letters, 12, 622–631. doi:10.1111/j.1461-0248.2009.01311.x
     Rogers, L. A., Stige, L. C., Olsen, E. M., Knutsen, H., Chan, K.-S. & Stenseth, N. C. (2011) Climate and population density drive changes in cod body size throughout a century on the Norwegian coast. Proceedings of the National Academy of Sciences, 108(5), 1961–1966.
     Stenseth, N. C., Bjørnstadf, O. N., Falck, W, Fromentin, J. M., Gjøsieter, J. & Gray, J. S. (1999) Dynamics of coastal cod populations: intra-and intercohort density dependence and stochastic processes. Proceedings of the Royal Society of London B: Biological Sciences, 266(1429), 1645–1654.",
-    date = "2023-02-01",
+    date = "2016-01-01",
     authors = c("Halvor Knutsen, Ebsen Moland"),
     license = toupper(metadata$CONT_1_MAIL[1])
   )

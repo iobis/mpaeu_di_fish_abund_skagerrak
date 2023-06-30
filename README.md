@@ -2,9 +2,11 @@
 
 ## About this dataset
 
-It was published in BioTIME (https://biotime.st-andrews.ac.uk/selectStudy.php?study=428)
+Samples are collected from the Skagerrak coast and each station (we have coordinates) is a beach seine haul (5-700m2) where all species are counted.
 
-The dataset is licensed under a CC-BY license.
+It was published in BioTIME (https://biotime.st-andrews.ac.uk/selectStudy.php?study=428) 
+
+The first version of the dataset is available since 2016 and is licensed under a CC-BY license.
 
 ## Workflow
 
